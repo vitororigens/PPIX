@@ -19,4 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('/phpinfo', [phpinfoController::class, 'dalepuxa']);
-Route::get('/teste-routes', [phpinfoController::class, 'dalepuxa']);
+Route::get('/teste-routes', [phpinfoController::class, 'teste']);
