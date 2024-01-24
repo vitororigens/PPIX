@@ -17,6 +17,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/phpinfo', [phpinfoController::class, 'dalepuxa']);
-Route::get('/teste-routes', [phpinfoController::class, 'teste']);
