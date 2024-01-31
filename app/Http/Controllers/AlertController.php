@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alert;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -68,42 +69,55 @@ class AlertController extends Controller
         $user = Auth::user();
         $alerts = Group::where('leader_id', $user->id)->get();
 
-        foreach (Group::where('leader_id', $user->id)->get() as $group) {
+        if ($alerts->isempty()) {
+            return response('Alerts Vazio!', 401);
+        }
+        
+        $apiURL = "https://fcm.googleapis.com/fcm/send";
+        
+        $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
+
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'key=' . $accessToken
+        ];
+        
+        foreach ($alerts as $group) {
             if ($group->user->fcm_token != '') {
-                $projectId = 'ppix-41bf8';
-                // $accessToken = $this->getAccessToken();
-                $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
-
+                
                 $message = [
-                    "message" => [
-                        "token" => $group->user->fcm_token,
-                        "notification" => [
-                            "title" => "Título da Notificação",
-                            "body" => "Corpo da Notificação",
-                        ],
-                        "data" => [
-                            "email" => $group->user->email,
-                        ],
-                    ],
+                    'to' => $group->user->fcm_token,
+                    'notification' => [
+                        'title' => $group->user->email,
+                        'body' => 'ok'
+                    ]
                 ];
-
-                Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . $accessToken,
-                ])->post("https://fcm.googleapis.com/v1/projects/$projectId/messages:send", $message);
             }
 
-            $alert = new Alert;
+            $response = Http::withHeaders($headers)->post($apiURL, $message);
+
+            $alert = new Alert();
             $alert->sender_id = $user->id;
             $alert->user_id = $group->user_id;
             $alert->car_id = $user->car_id;
             $alert->save();
         }
 
-        return response([
-            "success" => true,
-            "message" => 'Alerta enviado com sucesso'
-        ], 200);
+        try {
+            // return response($response, 401);
+            if ($response->status() == 200) {
+                return response([
+                    "success" => true,
+                    "message" => 'Alerta enviado com sucesso'
+                ], 200);
+            } else {
+                return response($response, 401);
+            }
+            // return response($response,401);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     function stopAlert(Request $request)
