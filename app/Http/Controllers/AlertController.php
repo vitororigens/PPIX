@@ -37,12 +37,11 @@ class AlertController extends Controller
         
         foreach (Group::where('leader_id', $user->id)->get() as $group) {
             
-            
             if ($group->user->fcm_token != '') {
                 Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'key=BDNKH4iUCorJ1r0KLvfcK8WiWgLJtky9C0UTnFAcxGtq0aRXn6bty_mcx8e_RsuvXgZQuY9v3cV2v-xAPNXiHSA'
-                ])->post('https://fcm.googleapis.com/fcm/send', [
+                    'Authorization' => 'Bearer BDNKH4iUCorJ1r0KLvfcK8WiWgLJtky9C0UTnFAcxGtq0aRXn6bty_mcx8e_RsuvXgZQuY9v3cV2v-xAPNXiHSA'
+                ])->post('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send', [
                     "delay_while_idle" => false,
                     "android"=>  [
                         "priority"=> "high"
