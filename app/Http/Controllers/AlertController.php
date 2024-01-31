@@ -72,29 +72,41 @@ class AlertController extends Controller
         if ($alerts->isempty()) {
             return response('Alerts Vazio!', 401);
         }
-        
+
         $apiURL = "https://fcm.googleapis.com/fcm/send";
-        
+
         $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
 
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'key=' . $accessToken
         ];
-        
+
         foreach ($alerts as $group) {
             if ($group->user->fcm_token != '') {
-                
+
+                // $message = [
+                //     'to' => $group->user->fcm_token,
+                //     'notification' => [
+                //         'title' => $group->user->email,
+                //         'body' => 'ok'
+                //     ]
+                // ];
+
                 $message = [
-                    'to' => $group->user->fcm_token,
-                    'notification' => [
-                        'title' => $group->user->email,
-                        'body' => 'ok'
-                    ]
+                    "delay_while_idle" => false,
+                    "android" =>  [
+                        "priority" => "high"
+                    ],
+                    "to" => $group->user->fcm_token,
+                    "data" => [
+                        "email" => $group->user->email
+                    ],
+                    "priority" => 10
                 ];
+                $response = Http::withHeaders($headers)->post($apiURL, $message);
             }
 
-            $response = Http::withHeaders($headers)->post($apiURL, $message);
 
             $alert = new Alert();
             $alert->sender_id = $user->id;
