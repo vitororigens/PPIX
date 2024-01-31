@@ -70,7 +70,7 @@ class AlertController extends Controller
 
         foreach (Group::where('leader_id', $user->id)->get() as $group) {
             if ($group->user->fcm_token != '') {
-                $projectId = '11117611081';
+                $projectId = 'ppix-41bf8';
                 // $accessToken = $this->getAccessToken();
                 $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
 
