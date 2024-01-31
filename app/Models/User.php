@@ -40,9 +40,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
-
-    function groupUsers() {
-        return $this->hasMany(Group::class, 'leader_id');
-    }
 }

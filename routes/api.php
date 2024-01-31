@@ -1,9 +1,15 @@
 <?php
 
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\SmsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CarController;
+use App\Http\Controllers\DataController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\SmsController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
@@ -21,46 +27,44 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('car', '\App\Http\Controllers\CarController');
-    Route::get('data/home', '\App\Http\Controllers\DataController@home');
-    Route::prefix('group')->controller(\App\Http\Controllers\GroupController::class)->group(function () {
-        Route::post('/users', 'validUsers');
-        Route::post('/remove', 'remove');
-        Route::get('/', 'index');
-        Route::post('/exit', 'exit');
-        Route::post('/update', 'update');
+    Route::resource('car', CarController::class);
+    Route::get('data/home', [DataController::class, 'home']);
+
+    Route::prefix('group')->group(function () {
+        Route::post('/users', [GroupController::class, 'validUsers']);
+        Route::post('/remove', [GroupController::class, 'remove']);
+        Route::get('/', [GroupController::class, 'index']);
+        Route::post('/exit', [GroupController::class, 'exit']);
+        Route::post('/update', [GroupController::class, 'update']);
     });
 
-    Route::prefix('alert')->controller(\App\Http\Controllers\AlertController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/wait', 'wait');
-        Route::post('/create', 'create');
-        Route::post('/finish', 'finish');
-        Route::post('/finish/all', 'finishAll');
-        Route::post('/stop', 'stopAlert');
-        Route::post('/update/token', 'updateFcmToken');
-        
+    Route::prefix('alert')->group(function () {
+        Route::get('/', [AlertController::class, 'index']);
+        Route::get('/wait', [AlertController::class, 'wait']);
+        Route::post('/create', [AlertController::class, 'create']);
+        Route::post('/finish', [AlertController::class, 'finish']);
+        Route::post('/finish/all', [AlertController::class, 'finishAll']);
+        Route::post('/stop', [AlertController::class, 'stopAlert']);
+        Route::post('/update/token', [AlertController::class, 'updateFcmToken']);
     });
 
-    Route::prefix('sms')->controller(\App\Http\Controllers\SmsController::class)->group(function () {
-        Route::post('/invite', 'invite');
+    Route::prefix('sms')->group(function () {
+        Route::post('/invite', [SmsController::class, 'invite']);
     });
 
-    Route::prefix('user')->controller(\App\Http\Controllers\UserController::class)->group(function () {
-        Route::post('/change/passwords', 'changePasswords');
-        Route::post('/change/car', 'changeCar');
+    Route::prefix('user')->group(function () {
+        Route::post('/change/passwords', [UserController::class, 'changePasswords']);
+        Route::post('/change/car', [UserController::class, 'changeCar']);
     });
 
-
-    Route::post('/position/update', '\App\Http\Controllers\PositionController@update');
-    
+    Route::post('/position/update', [PositionController::class, 'update']);
 });
 
-Route::prefix('auth')->controller(\App\Http\Controllers\AuthController::class)->group(function () {
-    Route::post('/recover/generate', 'sendEmailRecover');
-    Route::post('/recover/check', 'checkCode');
-    Route::post('/recover/change', 'changePassword');
-    Route::post('/register', 'register');
-    Route::post('/signin', 'signin');
-    Route::get('/check', 'check')->middleware('auth:sanctum');
+Route::prefix('auth')->group(function () {
+    Route::post('/recover/generate', [AuthController::class, 'sendEmailRecover']);
+    Route::post('/recover/check', [AuthController::class, 'checkCode']);
+    Route::post('/recover/change', [AuthController::class, 'changePassword']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/signin', [AuthController::class, 'signin']);
+    Route::get('/check', [AuthController::class, 'check'])->middleware('auth:sanctum');
 });
