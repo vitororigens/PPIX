@@ -10,7 +10,38 @@ use Illuminate\Support\Facades\Http;
 
 class AlertController extends Controller
 {
-    function index() {
+    // function getAccessToken()
+    // {
+    //     return 'ola';
+    //     $apiKey = 'SUA_CHAVE_API_DO_FIREBASE';
+    //     $customToken = 'TOKEN_GERADO_DO_FIREBASE';
+
+    //     $data = [
+    //         'token' => $customToken,
+    //         'returnSecureToken' => true,
+    //     ];
+
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=' . $apiKey);
+    //     curl_setopt($ch, CURLOPT_POST, 1);
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    //     $response = curl_exec($ch);
+    //     curl_close($ch);
+
+    //     $result = json_decode($response, true);
+
+    //     if (isset($result['idToken'])) {
+    //         $fcmToken = $result['idToken'];
+    //         echo "Token FCM: " . $fcmToken;
+    //     } else {
+    //         echo "Erro ao obter token FCM.";
+    //     }
+    // }
+
+    function index()
+    {
         $alerts = Alert::select('email', 'finished_lat', 'finished_log', 'alerts.id', 'status', 'sender_id', 'alerts.car_id', 'isCleaned', 'alerts.id')->with('car')->where('user_id', Auth::id())->where('isCleaned', false)->orwhere('sender_id', Auth::id())->where('isCleaned', false)->join('users', 'users.id', 'alerts.sender_id')->orderBy('id', 'desc')->get();
         foreach ($alerts as $alert) {
         }
@@ -19,7 +50,9 @@ class AlertController extends Controller
             "alerts" => $alerts
         ], 200);
     }
-    function wait() {
+
+    function wait()
+    {
         $alerts = Alert::select('email', 'lat', 'log', 'alerts.id', 'alerts.car_id')->with('car')->where('user_id', Auth::id())->where('status', 0)->where('stopAlerta', false)->join('users', 'users.id', 'alerts.sender_id')->get();
 
         foreach ($alerts as $alert) {
@@ -30,27 +63,27 @@ class AlertController extends Controller
         ], 200);
     }
 
-    function create(Request $request) 
+    function create(Request $request)
     {
         $user = Auth::user();
         $alerts = Group::where('leader_id', $user->id)->get();
-        
+
         foreach (Group::where('leader_id', $user->id)->get() as $group) {
-            
             if ($group->user->fcm_token != '') {
+                $projectId = 'ppix-41bf8';
+                // $accessToken = $this->getAccessToken();
+                $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
+
                 Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer BDNKH4iUCorJ1r0KLvfcK8WiWgLJtky9C0UTnFAcxGtq0aRXn6bty_mcx8e_RsuvXgZQuY9v3cV2v-xAPNXiHSA'
-                ])->post('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send', [
-                    "delay_while_idle" => false,
-                    "android"=>  [
-                        "priority"=> "high"
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ])->post("https://fcm.googleapis.com/v1/projects/$projectId/messages:send", [
+                    "message" => [
+                        "token" => $group->user->fcm_token,
+                        "data" => [
+                            "email" => $group->user->email,
+                        ],
                     ],
-                    "to" => $group->user->fcm_token,
-                    "data" => [
-                        "email" => $group->user->email
-                    ],
-                    "priority" => 10
                 ]);
             }
 
@@ -67,7 +100,8 @@ class AlertController extends Controller
         ], 200);
     }
 
-    function stopAlert(Request $request) {
+    function stopAlert(Request $request)
+    {
         $request->validate([
             'alert_id' => 'required'
         ]);
@@ -89,7 +123,6 @@ class AlertController extends Controller
             "success" => true,
             "message" => 'Alerta finalizado com sucesso'
         ], 200);
-
     }
 
     function finish(Request $request)
@@ -117,13 +150,12 @@ class AlertController extends Controller
             "success" => true,
             "message" => 'Alerta finalizado com sucesso'
         ], 200);
-        
     }
 
     function finishAll(Request $request)
     {
         $user = Auth::user();
-    
+
         Alert::where('user_id', $user->id)->update([
             'isCleaned' => true
         ]);
@@ -132,7 +164,6 @@ class AlertController extends Controller
             "success" => true,
             "message" => 'Alerta finalizado com sucesso'
         ], 200);
-        
     }
 
     function updateFcmToken(Request $request)
@@ -144,12 +175,10 @@ class AlertController extends Controller
         $user = Auth::user();
         $user->fcm_token = $request->fcmToken;
         $user->save();
-        
+
         return response([
             "success" => true,
             "message" => 'Token atualizado com sucesso'
         ], 200);
-
     }
-    
 }
