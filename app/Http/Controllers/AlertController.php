@@ -41,7 +41,7 @@ class AlertController extends Controller
             if ($group->user->fcm_token != '') {
                 Http::withHeaders([
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'key=AAAAp834bQ8:APA91bG-qeI4Cg6jshcTDVXNQAb5w3ZCEWuAPsJVUfEI3OzYmQpSO6nd7pHc7esUOERxkoXgBt3IvCjJUjcycqCfw7-uU5YyDZrZxE0eUe2tqcpk721phUMzoi91wnnC085TOSnIwVgK'
+                    'Authorization' => 'key=BDNKH4iUCorJ1r0KLvfcK8WiWgLJtky9C0UTnFAcxGtq0aRXn6bty_mcx8e_RsuvXgZQuY9v3cV2v-xAPNXiHSA'
                 ])->post('https://fcm.googleapis.com/fcm/send', [
                     "delay_while_idle" => false,
                     "android"=>  [
