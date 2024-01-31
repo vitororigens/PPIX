@@ -70,21 +70,27 @@ class AlertController extends Controller
 
         foreach (Group::where('leader_id', $user->id)->get() as $group) {
             if ($group->user->fcm_token != '') {
-                $projectId = 'ppix-41bf8';
+                $projectId = '11117611081';
                 // $accessToken = $this->getAccessToken();
                 $accessToken = 'AAAAApapSEk:APA91bHPX2T9PrAhFwIHzeo0k8TToEfEemMvKqy_zCO9RoAu6_Kmr1UJZuqIlZBM59x2Itas4ezIsjgg3R2mwxodEjXw0o5H1DASX6AZr5a0iPxblJytYoxiVr8L5bGRLEnnGBYAu0aR';
 
-                Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . $accessToken,
-                ])->post("https://fcm.googleapis.com/v1/projects/$projectId/messages:send", [
+                $message = [
                     "message" => [
                         "token" => $group->user->fcm_token,
+                        "notification" => [
+                            "title" => "Título da Notificação",
+                            "body" => "Corpo da Notificação",
+                        ],
                         "data" => [
                             "email" => $group->user->email,
                         ],
                     ],
-                ]);
+                ];
+
+                Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ])->post("https://fcm.googleapis.com/v1/projects/$projectId/messages:send", $message);
             }
 
             $alert = new Alert;
