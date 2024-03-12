@@ -12,7 +12,9 @@ class UserController extends Controller
         $request->validate([
             'passwordBank' => 'nullable',
             'passwordApp' => 'nullable',
-            'passwordEmergecy' => 'nullable'
+            'passwordEmergecy' => 'nullable',
+            'passwordDevice' => 'nullable',
+            'passwordDeviceEmergency' => 'nullable'
         ]);
 
         $user = Auth::user();
@@ -30,6 +32,16 @@ class UserController extends Controller
             $user->passwordEmergecy = $request->passwordEmergecy;
         } else {
             $user->passwordEmergecy = '';
+        }
+        if ($request->passwordDevice) {
+            $user->passwordDevice = $request->passwordDevice;
+        } else {
+            $user->passwordDevice = '';
+        }
+        if ($request->passwordDeviceEmergency) {
+            $user->passwordDeviceEmergency = $request->passwordDeviceEmergency;
+        } else {
+            $user->passwordDeviceEmergency = '';
         }
         $user->save();
 
