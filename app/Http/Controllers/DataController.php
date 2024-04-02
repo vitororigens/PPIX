@@ -20,4 +20,9 @@ class DataController extends Controller
             ]
         ], 200);
     }
+
+    public function testeuser()
+    {
+        return response('TESTE USER', 200);
+    }
 }

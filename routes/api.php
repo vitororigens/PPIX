@@ -22,6 +22,10 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+Route::prefix('pppix/api')->group(function () {
+    Route::get('/testeuser', [DataController::class, 'testeuser']);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
