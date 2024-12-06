@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('userspppix', function (Blueprint $table) {
+        Schema::create('userspp', function (Blueprint $table) {
             $table->id();
             $table->string('fcm_token');
             $table->integer('car_id')->nullable();
@@ -35,6 +35,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('userspppix');
+        Schema::dropIfExists('userspp');
     }
 };
