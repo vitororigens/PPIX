@@ -95,7 +95,7 @@ class AuthController extends Controller
         $emailCode->code = $FourDigitRandomNumber;
         $emailCode->save();
 
-        return Mail::to($user->email)->send(new Recover($FourDigitRandomNumber));
+        Mail::to($user->email)->send(new Recover($FourDigitRandomNumber));
 
 
         return response([

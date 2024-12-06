@@ -33,7 +33,7 @@ class Recover extends Mailable
     public function envelope()
     {
         return new Envelope(
-            from: new Address('sos@geanpedro.com.br', 'Sos App'),
+            from: new Address('no-reply@pppix.app.br', 'no-reply'),
             subject: 'Recuperação de senha',
         );
     }
