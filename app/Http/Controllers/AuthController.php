@@ -32,6 +32,7 @@ class AuthController extends Controller
         $user->email = request('email');
         $user->phone = request('phone');
         $user->password = bcrypt(request('password'));
+        $user->subscribed = request('subscribed');
         $user->save();
 
         return response()->json([
