@@ -56,10 +56,8 @@ class AuthController extends Controller
             ], 400);
         }
         
-        if($user->subscriptionsids <> $request->subscriptionsids){
-            $user->subscriptionsids = $request->subscriptionsids;
-            $user->save();
-        }
+        $user->subscriptionsids = $request->subscriptionsids;
+        $user->save();
 
         return response()->json([
             "success" => true,
