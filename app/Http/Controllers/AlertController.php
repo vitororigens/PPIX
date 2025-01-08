@@ -188,9 +188,7 @@ class AlertController extends Controller
     {
         $user = Auth::user();
 
-        Alert::where('sender_id', $user->id)->update([
-            'isCleaned' => true
-        ]);
+        Alert::where('user_id', $user->id)->delete();
 
         return response([
             "success" => true,
