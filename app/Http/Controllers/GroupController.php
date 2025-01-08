@@ -17,11 +17,11 @@ class GroupController extends Controller
             'email' => $user->email,
             'phone' => $user->phone,
             'id' => $user->id,
-            'subscribed' => $user->subscribed,
+            'subscriptionsids' => $user->subscriptionsids,
             'leader_id' => $user->id,
          ]);
         foreach ($groups as $group) {
-            $group->users = Group::select('email', 'phone', 'subscribed')->where('leader_id', $group->leader_id)->join('users', 'users.id', 'groups.user_id')->get();
+            $group->users = Group::select('email', 'phone', 'subscriptionsids')->where('leader_id', $group->leader_id)->join('users', 'users.id', 'groups.user_id')->get();
         }
 
         return response([

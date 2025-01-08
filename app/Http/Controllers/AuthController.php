@@ -32,7 +32,7 @@ class AuthController extends Controller
         $user->email = request('email');
         $user->phone = request('phone');
         $user->password = bcrypt(request('password'));
-        $user->subscribed = request('subscribed');
+        $user->subscriptionsids = request('subscriptionsids');
         $user->save();
 
         return response()->json([
@@ -54,6 +54,11 @@ class AuthController extends Controller
                 "success" => false,
                 "errors" => 'Login ou senha invalidos'
             ], 400);
+        }
+        
+        if($user->subscriptionsids <> $request->subscriptionsids){
+            $user->subscriptionsids = $request->subscriptionsids;
+            $user->save();
         }
 
         return response()->json([
