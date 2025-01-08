@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/wait', [AlertController::class, 'wait']);
         Route::post('/create', [AlertController::class, 'create']);
         Route::post('/finish', [AlertController::class, 'finish']);
+        Route::post('/finish/sender', [AlertController::class, 'finishAllSends']);
         Route::post('/finish/all', [AlertController::class, 'finishAll']);
         Route::post('/stop', [AlertController::class, 'stopAlert']);
         Route::post('/update/token', [AlertController::class, 'updateFcmToken']);

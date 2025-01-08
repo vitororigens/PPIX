@@ -184,6 +184,20 @@ class AlertController extends Controller
         ], 200);
     }
 
+    function finishAllSends(Request $request)
+    {
+        $user = Auth::user();
+
+        Alert::where('sender_id', $user->id)->update([
+            'isCleaned' => true
+        ]);
+
+        return response([
+            "success" => true,
+            "message" => 'Alerta finalizado com sucesso'
+        ], 200);
+    }
+
     function finishAll(Request $request)
     {
         $user = Auth::user();
